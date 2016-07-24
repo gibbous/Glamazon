@@ -46,12 +46,34 @@ var promptCustomer = function(res) {
             name: 'choice',
             message: 'What would you like to purchase?'
         }]).then(function(val) {
+            (console.log(val.choice));
 
                 //SET THE VAR correct TO FALSE SO AS TO MAKE SURE THE USER INPUTS A VALID PRODUCT NAME//
                 var correct = false;
                 //LOOPS THROUGH THE MYSQL TABLE TO CHECK THAT THE PRODUCT THEY WANTED EXISTS//
                 for (var i = 0; i < res.length; i++) {                      
                   //1. TODO: IF THE PRODUCT EXISTS, SET correct = true and ASK THE USER TO SEE HOW MANY OF THE PRODUCT THEY WOULD LIKE TO BUY//
+                  connection.query("SELECT * FROM products WHERE ?", [{
+                              ProductName: val.choice
+                            }], function(err, res) {
+                             
+                            });
+
+                  if (res != null){
+
+                    correct = true;
+
+
+                    inquirer.prompt([{
+                         type: 'input',
+                        name: 'quantity',
+                        message: 'How many would you like to purchase?'
+                    }]).then(function(qty) {
+                        (console.log(qty.quantity));
+                    });
+                    return;
+                }
+
                   //2. TODO: CHECK TO SEE IF THE AMOUNT REQUESTED IS LESS THAN THE AMOUNT THAT IS AVAILABLE//                       
                   //3. TODO: UPDATE THE MYSQL TO REDUCE THE StockQuanaity by the THE AMOUNT REQUESTED  - UPDATE COMMAND!
                   //4. TODO: SHOW THE TABLE again by calling the function that makes the table
