@@ -61,22 +61,63 @@ var promptCustomer = function(res) {
 
                   if (res != null){
 
+                    var product = val.choice
+                    console.log(product);
                     correct = true;
 
 
                     inquirer.prompt([{
                          type: 'input',
                         name: 'quantity',
-                        message: 'How many would you like to purchase?'
+                        message: 'How many would you like to purchase?',
+                        validate: function(value) {
+                            if ((isNaN(value)) == false){
+                                return true;
+                            }
+                            return "ha ha, very funny - pick a number or go away";
+                        }
+
                     }]).then(function(qty) {
-                        (console.log(qty.quantity));
+
+                       
+
+                           
+                        
+                    //2. TODO: CHECK TO SEE IF THE AMOUNT REQUESTED IS LESS THAN THE AMOUNT THAT IS AVAILABLE//  
+                  connection.query("SELECT StockQuantity FROM products WHERE ?", [{
+                              ProductName: product
+                            }], function(err, res) {
+                                //console.log(res[0]);
+                                if (res[0].StockQuantity == 0){
+                                    console.log("We're sorry, your chosen product is out of stock. Please select a different item");
+                                    correct = false
+                                    makeTable();
+                                } else {
+                                    var stock = res[0].StockQuantity - qty.quantity;
+                                    console.log(stock);
+
+                                     //3. TODO: UPDATE THE MYSQL TO REDUCE THE StockQuanaity by the THE AMOUNT REQUESTED  - UPDATE COMMAND!
+                                    connection.query("UPDATE products SET ? WHERE ?", [{
+                                      quantity: stock
+                                    },{
+                                      ProductName: product
+                                    }], function(err, res) {
+                                      console.log(qty.quantity +" of " + product +"added to cart" );
+                                    });
+                                   
+                                }
+                             
+                            });
+
                     });
-                    return;
+                    
                 }
 
-                  //2. TODO: CHECK TO SEE IF THE AMOUNT REQUESTED IS LESS THAN THE AMOUNT THAT IS AVAILABLE//                       
-                  //3. TODO: UPDATE THE MYSQL TO REDUCE THE StockQuanaity by the THE AMOUNT REQUESTED  - UPDATE COMMAND!
+               
+                 
+
                   //4. TODO: SHOW THE TABLE again by calling the function that makes the table
+                      return;
                 }
 
                 //IF THE PRODUCT REQUESTED DOES NOT EXIST, RESTARTS PROMPT//
