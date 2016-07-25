@@ -3,6 +3,9 @@ var mysql = require('mysql');
 var inquirer = require('inquirer');
 var rainbow = require('ansi-rainbow');
 
+//VARIABLES
+var total = 0;
+
 //INITIALIZES THE CONNECTION VARIABLE TO SYNC WITH A MYSQL DATABASE//
 var connection = mysql.createConnection({
     host: "localhost",
@@ -67,7 +70,8 @@ var promptCustomer = function(res) {
                   connection.query("SELECT * FROM products WHERE ?", [{
                               ProductName: val.choice
                             }], function(err, res) {
-                                //console.log(res);
+                                var price = res[i].Price;
+
                   
                    if (res.length < 1){
                     console.log("We're sorry, your product was not found. Please try again");
@@ -78,6 +82,7 @@ var promptCustomer = function(res) {
 
                   else {
                     var product = val.choice
+                    
                     correct = true;
 
                     inquirer.prompt([{
@@ -102,7 +107,10 @@ var promptCustomer = function(res) {
                                     makeTable();
                                 } else {
                                     var stock = res[0].StockQuantity - qty.quantity;
-                                    console.log(stock);
+                                    
+                                    console.log(price);
+                                     total = total + (price * qty.quantity);
+                                    //console.log(stock);
                             //3. TODO: UPDATE THE MYSQL TO REDUCE THE StockQuanaity by the THE AMOUNT REQUESTED  - UPDATE COMMAND!
                                     connection.query("UPDATE products SET ? WHERE ?", [{
                                       quantity: stock
@@ -110,6 +118,7 @@ var promptCustomer = function(res) {
                                       ProductName: product
                                     }], function(err, res) {
                                       console.log("Quantity " + qty.quantity +" of " + product + " added to cart" );
+                                      console.log("Your cost for this order is $" + total);
                                       console.log("");
                                       console.log(rainbow.r("°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸"));
                                       console.log("");
@@ -126,6 +135,7 @@ var promptCustomer = function(res) {
                         if (val.confirm == true) {
                             makeTable();
                         } else {
+                        console.log("Your order total is $" + total);    
                         console.log("Thank you for shopping at Glamazon! Have a fabulous day!");
                         process.exit();
                     }
