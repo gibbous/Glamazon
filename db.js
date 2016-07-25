@@ -70,7 +70,7 @@ var promptCustomer = function(res) {
                   connection.query("SELECT * FROM products WHERE ?", [{
                               ProductName: val.choice
                             }], function(err, res) {
-                                var price = res[i].Price;
+                                
 
                   
                    if (res.length < 1){
@@ -82,6 +82,7 @@ var promptCustomer = function(res) {
 
                   else {
                     var product = val.choice
+                    var price = res[i].Price;
                     
                     correct = true;
 
@@ -108,7 +109,7 @@ var promptCustomer = function(res) {
                                 } else {
                                     var stock = res[0].StockQuantity - qty.quantity;
                                     
-                                    console.log(price);
+                                    //console.log(price);
                                      total = total + (price * qty.quantity);
                                     //console.log(stock);
                             //3. TODO: UPDATE THE MYSQL TO REDUCE THE StockQuanaity by the THE AMOUNT REQUESTED  - UPDATE COMMAND!
