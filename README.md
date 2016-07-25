@@ -1,2 +1,2 @@
 # Glamazon
-A one-stop shop for looks that pop
+A one stop cosplay shop for looks that pop
